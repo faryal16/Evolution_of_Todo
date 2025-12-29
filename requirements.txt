@@ -1,0 +1,2 @@
+# Requirements for Todo In-Memory Python Console App
+rich>=13.0.0

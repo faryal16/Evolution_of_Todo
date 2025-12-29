@@ -1,55 +1,67 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- Sync Impact Report:
+Version change: N/A → 1.0.0
+List of modified principles: N/A (new constitution)
+Added sections: All sections (new constitution)
+Removed sections: N/A
+Templates requiring updates: N/A (new file)
+Follow-up TODOs: None
+-->
+# Todo In-Memory Python Console App Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spec-Driven Development
+All development follows a structured specification-first approach using Claude Code and Spec-Kit Plus; Every feature and change must be documented in specifications before implementation; Code must strictly adhere to generated specifications with no deviations.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Clean, Maintainable Python Code
+Follow Python 3.13+ best practices and conventions; Write clear, readable code with appropriate documentation; Maintain consistent code style following PEP 8 guidelines; Prioritize maintainability and testability in all implementations.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. In-Memory Data Storage Only
+All data must be stored in memory only with no persistent storage mechanisms; No file-based, database, or external storage systems; Data will be lost when the application terminates; This constraint ensures simplicity and avoids persistence complexity.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Reproducibility and Clarity
+All implementation steps and development processes must be clearly documented; Changes to specifications and implementation must be versioned and tracked; Code and documentation must be reproducible across different environments; Emphasize clarity in both implementation and documentation.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Console Application Excellence
+The application must provide a clear, user-friendly console interface; All task operations (Add, Delete, Update, View, Mark Complete) must be implemented correctly; Task status must be clearly displayed to users; Console interactions must be intuitive and responsive.
 
-### [PRINCIPLE_6_NAME]
+### VI. No Manual Coding Constraint
+All code generation must be done through Claude Code and Spec-Kit Plus tools; Manual coding is strictly prohibited; All implementations must follow the generated specifications precisely; Human intervention should only be for clarification and validation.
 
+## Additional Constraints
 
-[PRINCIPLE__DESCRIPTION]
+### Technology Stack Requirements
+- Python 3.13+ must be used for all implementations
+- UV (Python package manager) conventions must be followed
+- Windows users must use WSL 2 for development consistency
+- All dependencies must be properly managed through Python packaging standards
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### Feature Implementation Standards
+- All 5 basic features must be implemented: Add, Delete, Update, View, Mark Complete
+- Each feature must be tested and validated before completion
+- Console application must clearly display task status for all operations
+- Error handling must be graceful and informative to users
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Development Workflow
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Specification and Documentation
+- Versioned specifications must be maintained in /specs history
+- All changes to specifications must be documented with proper versioning
+- Development steps must be fully documented for audit and reproducibility
+- Code review and task validation must be completed via Claude Code
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Quality Gates
+- All features must be implemented correctly according to specifications
+- Application must run without errors in the target environment
+- Specifications and development steps must be fully documented
+- Code must pass validation and review processes before acceptance
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Amendment Process
+This constitution may only be amended through the formal specification process using Claude Code and Spec-Kit Plus tools; All amendments must be documented with proper versioning and approval; Changes to this constitution require explicit project stakeholder approval; The ratification and amendment dates must be updated accordingly.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### Compliance Requirements
+All development work must comply with the principles and constraints outlined in this constitution; Code reviews must verify compliance with all specified principles; Any deviations from these principles must be documented and approved through the specification process; Regular compliance reviews should be conducted to ensure adherence.
+
+**Version**: 1.0.0 | **Ratified**: 2025-12-29 | **Last Amended**: 2025-12-29
