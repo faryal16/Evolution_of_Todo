@@ -26,8 +26,8 @@ const LoginPage = () => {
       // Store auth data
       setAuthData(response.token, response.user, response.expiresAt);
 
-      // Redirect to tasks page
-      router.push('/tasks');
+      // Redirect to home page
+      router.push('/');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {
@@ -36,7 +36,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br  p-4">
+    <div className="min-h-[60vh] flex items-center justify-center bg-gradient-to-br  p-4">
       <div className="w-full max-w-md bg-pink-100 rounded-2xl shadow-xl overflow-hidden border-t-4 border-pink-400">
         <div className="p-8">
           <div className="text-center">

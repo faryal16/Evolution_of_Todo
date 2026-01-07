@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-200 via-pink-200 to-yellow-200 font-sans">
+      <div className="min-h-[60vh] flex flex-col bg-gradient-to-br from-purple-200 via-pink-200 to-yellow-200 font-sans">
 
         {/* Header */}
         <header className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg">
@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </header>
 
         {/* Main Content — Full width/height, no extra wrapper */}
-        <main className={`${inter.className} flex-1 w-full p-6`}>
+        <main className={`${inter.className} flex-1  w-full p-6`}>
           <Component {...pageProps} />
         </main>
 

@@ -89,7 +89,7 @@ export default function TasksPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen py-8 bg-gradient-to-br ">
+      <div className="min-h-[60vh] py-8 bg-gradient-to-br ">
         <div className="max-w-4xl mx-auto px-4">
           <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">My Tasks</h1>
 

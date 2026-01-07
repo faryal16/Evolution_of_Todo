@@ -37,7 +37,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br  flex items-center justify-center p-4">
+    <div className="min-h-[60vh] bg-gradient-to-br  flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-pink-100 rounded-2xl shadow-xl overflow-hidden border-t-4 border-pink-400">
         <div className="p-8">
           <div className="text-center">
