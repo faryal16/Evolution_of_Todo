@@ -1,16 +1,7 @@
 import { useState, useEffect } from 'react';
 import { taskAPI } from '@/services/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
-
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-}
+import { Task } from '@/types';
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -72,9 +63,9 @@ export default function TasksPage() {
     }
   };
 
-  const handleDeleteTask = async (id: number) => {
+  const handleDeleteTask = async (id: string) => {
     try {
-      await taskAPI.deleteTask(id.toString());
+      await taskAPI.deleteTask(id);
       setTasks(tasks.filter(task => task.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);

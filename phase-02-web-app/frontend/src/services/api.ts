@@ -233,8 +233,9 @@ export const taskAPI = {
       const data = await response.json();
       const tasks = data.data?.tasks || [];
       // Map backend field names to frontend field names
-      return tasks.map(task => ({
+      return tasks.map((task: any) => ({
         ...task,
+        id: task.id?.toString() || '',
         userId: task.user_id,
         createdAt: task.created_at,
         updatedAt: task.updated_at
@@ -284,6 +285,7 @@ export const taskAPI = {
       // Map backend field names to frontend field names
       return {
         ...task,
+        id: task.id?.toString() || '',
         userId: task.user_id,
         createdAt: task.created_at,
         updatedAt: task.updated_at
@@ -333,6 +335,7 @@ export const taskAPI = {
       // Map backend field names to frontend field names
       return {
         ...task,
+        id: task.id?.toString() || '',
         userId: task.user_id,
         createdAt: task.created_at,
         updatedAt: task.updated_at
@@ -382,6 +385,7 @@ export const taskAPI = {
       // Map backend field names to frontend field names
       return {
         ...task,
+        id: task.id?.toString() || '',
         userId: task.user_id,
         createdAt: task.created_at,
         updatedAt: task.updated_at
