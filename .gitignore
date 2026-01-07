@@ -2,24 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
 # Virtual environments
 .venv/
@@ -31,14 +16,10 @@ ENV/
 .pytest_cache/
 .coverage
 htmlcov/
-.cov/
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
 # OS
 .DS_Store
@@ -53,19 +34,10 @@ logs/
 .env.local
 .env.*.local
 
-# Project specific
-.DS_Store
-*.pyc
-*.pyo
-*~
-.pytest_cache/
-.coverage
-htmlcov/
-.pytest_cache/
-__pycache__/
+# Backend caches
+phase-02-web-app/backend/.pytest_cache
+phase-02-web-app/backend/src/models/__pycache__/
 
-node_modules/
-.next/
-.env
-.DS_Store
-*.log
+# Frontend
+phase-02-web-app/frontend/node_modules
+phase-02-web-app/frontend/.next
