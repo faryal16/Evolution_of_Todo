@@ -63,3 +63,9 @@ logs/
 htmlcov/
 .pytest_cache/
 __pycache__/
+
+node_modules/
+.next/
+.env
+.DS_Store
+*.log
