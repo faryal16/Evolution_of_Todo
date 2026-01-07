@@ -34,6 +34,10 @@ A command-line todo application that stores tasks in memory only. The applicatio
 Run the application:
 
 ```bash
+cd phase-01-console-app
+```
+
+```bash
 python -m src.cli.todo_app
 ```
 

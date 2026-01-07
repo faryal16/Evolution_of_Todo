@@ -1,0 +1,13 @@
+version: "1.0"
+runtime:
+  cpu: 2
+  memory: 8GiB
+  accelerator: null
+sdk: docker
+language: en
+tags:
+  - fastapi
+  - python
+  - todo
+  - api
+  - backend

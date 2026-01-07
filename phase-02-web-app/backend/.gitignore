@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env*
+!.env.example
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# Testing
+.pytest_cache/
+.hypothesis/
+
+# FastAPI / uvicorn
+*.db
+*.db-journal
+
+# Alembic
+alembic/versions/*.py
+
+# Distribution / Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage.xml
+nosetests.xml
+coverage/
+docs/_build/
+
+# Local development
+.run/
+*.local
