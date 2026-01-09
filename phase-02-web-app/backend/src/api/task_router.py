@@ -19,7 +19,6 @@ router = APIRouter()
 @limiter.limit("100/minute")  # Rate limit for getting tasks (T043)
 def get_tasks(
     request: Request,  # Needed for rate limiting
-    user_id: str,
     status: Optional[str] = Query(None, regex="^(all|pending|completed)$"),
     sort: Optional[str] = Query(None, regex="^(created|title)$"),
     limit: int = Query(50, ge=1, le=100),
@@ -30,14 +29,9 @@ def get_tasks(
     """
     Get all tasks for a user with optional filtering and sorting
     """
-    # Verify that the user_id in path matches the authenticated user
-    if user_id != current_user:
-        from ..lib.exceptions import UnauthorizedAccessException
-        raise UnauthorizedAccessException()
-
     tasks, total = TaskService.get_tasks(
         session=session,
-        user_id=user_id,
+        user_id=current_user,
         status=status,
         sort=sort,
         limit=limit,
@@ -58,7 +52,6 @@ def get_tasks(
 @limiter.limit("50/minute")  # Rate limit for creating tasks (T043)
 def create_task(
     request: Request,  # Needed for rate limiting
-    user_id: str,
     task: TaskCreate,
     current_user: str = Depends(get_current_user),
     session: Session = Depends(get_session)
@@ -66,15 +59,10 @@ def create_task(
     """
     Create a new task for the user
     """
-    # Verify that the user_id in path matches the authenticated user
-    if user_id != current_user:
-        from ..lib.exceptions import UnauthorizedAccessException
-        raise UnauthorizedAccessException()
-
     created_task = TaskService.create_task(
         session=session,
         task=task,
-        user_id=user_id
+        user_id=current_user
     )
 
     return SuccessResponse(data=created_task.dict())
@@ -84,7 +72,6 @@ def create_task(
 @limiter.limit("100/minute")  # Rate limit for getting a specific task (T043)
 def get_task(
     request: Request,  # Needed for rate limiting
-    user_id: str,
     id: int,
     current_user: str = Depends(get_current_user),
     session: Session = Depends(get_session)
@@ -92,15 +79,10 @@ def get_task(
     """
     Get a specific task by ID
     """
-    # Verify that the user_id in path matches the authenticated user
-    if user_id != current_user:
-        from ..lib.exceptions import UnauthorizedAccessException
-        raise UnauthorizedAccessException()
-
     task = TaskService.get_task_by_id(
         session=session,
         task_id=id,
-        user_id=user_id
+        user_id=current_user
     )
 
     return SuccessResponse(data=task.dict())
@@ -110,7 +92,6 @@ def get_task(
 @limiter.limit("30/minute")  # Rate limit for updating tasks (T043)
 def update_task(
     request: Request,  # Needed for rate limiting
-    user_id: str,
     id: int,
     task_update: TaskUpdate,
     current_user: str = Depends(get_current_user),
@@ -119,16 +100,11 @@ def update_task(
     """
     Update a specific task by ID
     """
-    # Verify that the user_id in path matches the authenticated user
-    if user_id != current_user:
-        from ..lib.exceptions import UnauthorizedAccessException
-        raise UnauthorizedAccessException()
-
     updated_task = TaskService.update_task(
         session=session,
         task_id=id,
         task_update=task_update,
-        user_id=user_id
+        user_id=current_user
     )
 
     return SuccessResponse(data=updated_task.dict())
@@ -138,7 +114,6 @@ def update_task(
 @limiter.limit("30/minute")  # Rate limit for deleting tasks (T043)
 def delete_task(
     request: Request,  # Needed for rate limiting
-    user_id: str,
     id: int,
     current_user: str = Depends(get_current_user),
     session: Session = Depends(get_session)
@@ -146,15 +121,10 @@ def delete_task(
     """
     Delete a specific task by ID
     """
-    # Verify that the user_id in path matches the authenticated user
-    if user_id != current_user:
-        from ..lib.exceptions import UnauthorizedAccessException
-        raise UnauthorizedAccessException()
-
     TaskService.delete_task(
         session=session,
         task_id=id,
-        user_id=user_id
+        user_id=current_user
     )
 
     return SuccessResponse(message="Task deleted successfully")
@@ -166,7 +136,6 @@ from fastapi import Body
 @limiter.limit("50/minute")  # Rate limit for toggling task completion (T043)
 def toggle_task_completion(
     request: Request,  # Needed for rate limiting
-    user_id: str,
     id: int,
     task_patch: TaskPatch = Body(None),
     current_user: str = Depends(get_current_user),
@@ -175,11 +144,6 @@ def toggle_task_completion(
     """
     Toggle the completion status of a task
     """
-    # Verify that the user_id in path matches the authenticated user
-    if user_id != current_user:
-        from ..lib.exceptions import UnauthorizedAccessException
-        raise UnauthorizedAccessException()
-
     # Handle the case where no body is provided (just toggle)
     completed_status = None
     if task_patch is not None:
@@ -188,7 +152,7 @@ def toggle_task_completion(
     updated_task = TaskService.toggle_task_completion(
         session=session,
         task_id=id,
-        user_id=user_id,
+        user_id=current_user,
         completed=completed_status
     )
 

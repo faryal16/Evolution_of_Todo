@@ -64,7 +64,7 @@ def test_user_isolation_task_access(client: TestClient, session: Session):
     with patch("src.lib.auth.get_current_user", return_value=user1_id):
         # Create a task as user1
         response = client.post(
-            f"/api/{user1_id}/tasks",
+            "/api/tasks",
             json=task1_data,
             headers={"Authorization": f"Bearer {user1_token}"}
         )
@@ -75,7 +75,7 @@ def test_user_isolation_task_access(client: TestClient, session: Session):
     with patch("src.lib.auth.get_current_user", return_value=user2_id):
         # Create a task as user2
         response = client.post(
-            f"/api/{user2_id}/tasks",
+            "/api/tasks",
             json=task2_data,
             headers={"Authorization": f"Bearer {user2_token}"}
         )
@@ -86,36 +86,36 @@ def test_user_isolation_task_access(client: TestClient, session: Session):
     # Verify user1 can access their own task
     with patch("src.lib.auth.get_current_user", return_value=user1_id):
         response = client.get(
-            f"/api/{user1_id}/tasks/{task1_id}",
+            f"/api/tasks/{task1_id}",
             headers={"Authorization": f"Bearer {user1_token}"}
         )
         assert response.status_code == 200
         assert response.json()["data"]["id"] == task1_id
 
-    # Verify user1 cannot access user2's task
+    # Verify user1 cannot access user2's task (will result in 404 since task exists for user2 but not for user1)
     with patch("src.lib.auth.get_current_user", return_value=user1_id):
         response = client.get(
-            f"/api/{user2_id}/tasks/{task2_id}",
+            f"/api/tasks/{task2_id}",
             headers={"Authorization": f"Bearer {user1_token}"}
         )
-        assert response.status_code == 401  # Unauthorized
+        assert response.status_code in [401, 404]  # Unauthorized or Not Found
 
     # Verify user2 can access their own task
     with patch("src.lib.auth.get_current_user", return_value=user2_id):
         response = client.get(
-            f"/api/{user2_id}/tasks/{task2_id}",
+            f"/api/tasks/{task2_id}",
             headers={"Authorization": f"Bearer {user2_token}"}
         )
         assert response.status_code == 200
         assert response.json()["data"]["id"] == task2_id
 
-    # Verify user2 cannot access user1's task
+    # Verify user2 cannot access user1's task (will result in 404 since task exists for user1 but not for user2)
     with patch("src.lib.auth.get_current_user", return_value=user2_id):
         response = client.get(
-            f"/api/{user1_id}/tasks/{task1_id}",
+            f"/api/tasks/{task1_id}",
             headers={"Authorization": f"Bearer {user2_token}"}
         )
-        assert response.status_code == 401  # Unauthorized
+        assert response.status_code in [401, 404]  # Unauthorized or Not Found
 
 
 def test_user_isolation_task_list(client: TestClient, session: Session):
@@ -133,7 +133,7 @@ def test_user_isolation_task_list(client: TestClient, session: Session):
 
     with patch("src.lib.auth.get_current_user", return_value=user1_id):
         response = client.post(
-            f"/api/{user1_id}/tasks",
+            "/api/tasks",
             json=task1_data,
             headers={"Authorization": f"Bearer {user1_token}"}
         )
@@ -141,7 +141,7 @@ def test_user_isolation_task_list(client: TestClient, session: Session):
 
     with patch("src.lib.auth.get_current_user", return_value=user2_id):
         response = client.post(
-            f"/api/{user2_id}/tasks",
+            "/api/tasks",
             json=task2_data,
             headers={"Authorization": f"Bearer {user2_token}"}
         )
@@ -150,7 +150,7 @@ def test_user_isolation_task_list(client: TestClient, session: Session):
     # Verify user1 only sees their own task
     with patch("src.lib.auth.get_current_user", return_value=user1_id):
         response = client.get(
-            f"/api/{user1_id}/tasks",
+            "/api/tasks",
             headers={"Authorization": f"Bearer {user1_token}"}
         )
         assert response.status_code == 200
@@ -162,7 +162,7 @@ def test_user_isolation_task_list(client: TestClient, session: Session):
     # Verify user2 only sees their own task
     with patch("src.lib.auth.get_current_user", return_value=user2_id):
         response = client.get(
-            f"/api/{user2_id}/tasks",
+            "/api/tasks",
             headers={"Authorization": f"Bearer {user2_token}"}
         )
         assert response.status_code == 200

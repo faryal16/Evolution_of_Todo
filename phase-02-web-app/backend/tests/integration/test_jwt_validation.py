@@ -19,7 +19,7 @@ def test_valid_jwt_token_access(client: TestClient):
 
     # Test accessing a protected endpoint with valid token
     response = client.get(
-        f"/api/{user_id}/tasks",
+        "/api/tasks",
         headers={"Authorization": f"Bearer {valid_token}"}
     )
     # This should return 200 (OK) or 404 (not found) but not 401 (unauthorized)
@@ -36,7 +36,7 @@ def test_invalid_jwt_token_access(client: TestClient):
 
     # Test accessing a protected endpoint with invalid token
     response = client.get(
-        f"/api/{user_id}/tasks",
+        "/api/tasks",
         headers={"Authorization": f"Bearer {invalid_token}"}
     )
     # Should return 401 Unauthorized
@@ -52,7 +52,7 @@ def test_missing_jwt_token_access(client: TestClient):
 
     # Test accessing a protected endpoint without token
     response = client.get(
-        f"/api/{user_id}/tasks"
+        "/api/tasks"
         # No Authorization header
     )
     # Should return 401 Unauthorized
@@ -75,7 +75,7 @@ def test_expired_jwt_token_access(client: TestClient):
 
     # Test accessing a protected endpoint with expired token
     response = client.get(
-        f"/api/{user_id}/tasks",
+        "/api/tasks",
         headers={"Authorization": f"Bearer {expired_token}"}
     )
     # Should return 401 Unauthorized for expired token

@@ -54,7 +54,7 @@ from .api.task_router import router as task_router
 from .api.auth_router import router as auth_router
 
 # Add routers to the app
-app.include_router(task_router, prefix="/api/{user_id}", tags=["tasks"])
+app.include_router(task_router, prefix="/api", tags=["tasks"])
 app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 
 
