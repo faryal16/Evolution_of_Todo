@@ -11,6 +11,8 @@ import logging
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from sqlmodel import SQLModel
+from .database.database import engine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -87,6 +89,18 @@ async def log_requests(request, call_next):
 @app.get("/")
 def read_root():
     return {"message": "Todo API is running!"}
+
+
+@app.on_event("startup")
+def on_startup():
+    """Initialize database tables on application startup"""
+    logger.info("Initializing database tables...")
+    try:
+        SQLModel.metadata.create_all(bind=engine)
+        logger.info("Database tables initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database tables: {e}")
+        raise
 
 
 @app.get("/health")

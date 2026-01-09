@@ -56,12 +56,14 @@ export const authAPI = {
       });
 
       if (!response.ok) {
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
@@ -104,12 +106,14 @@ export const authAPI = {
       });
 
       if (!response.ok) {
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
@@ -191,7 +195,7 @@ export const taskAPI = {
         throw new Error('User not authenticated');
       }
 
-      let url = `/api/${userId}/tasks`;
+      let url = `/api/${encodeURIComponent(userId)}/tasks`;
       const params = new URLSearchParams();
 
       if (status && status !== 'all') {
@@ -218,12 +222,14 @@ export const taskAPI = {
           }
           throw new Error('Authentication required');
         }
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
@@ -253,7 +259,7 @@ export const taskAPI = {
         throw new Error('User not authenticated');
       }
 
-      const response = await fetch(`/api/${userId}/tasks`, {
+      const response = await fetch(`/api/${encodeURIComponent(userId)}/tasks`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(taskData),
@@ -268,12 +274,14 @@ export const taskAPI = {
           }
           throw new Error('Authentication required');
         }
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
@@ -303,7 +311,7 @@ export const taskAPI = {
         throw new Error('User not authenticated');
       }
 
-      const response = await fetch(`/api/${userId}/tasks/${id}`, {
+      const response = await fetch(`/api/${encodeURIComponent(userId)}/tasks/${encodeURIComponent(id)}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(taskData),
@@ -318,12 +326,14 @@ export const taskAPI = {
           }
           throw new Error('Authentication required');
         }
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
@@ -353,7 +363,7 @@ export const taskAPI = {
         throw new Error('User not authenticated');
       }
 
-      const response = await fetch(`/api/${userId}/tasks/${id}/complete`, {
+      const response = await fetch(`/api/${encodeURIComponent(userId)}/tasks/${encodeURIComponent(id)}/complete`, {
         method: 'PATCH',
         headers: getAuthHeaders(),
         body: JSON.stringify({ completed }),
@@ -368,12 +378,14 @@ export const taskAPI = {
           }
           throw new Error('Authentication required');
         }
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
@@ -403,7 +415,7 @@ export const taskAPI = {
         throw new Error('User not authenticated');
       }
 
-      const response = await fetch(`/api/${userId}/tasks/${id}`, {
+      const response = await fetch(`/api/${encodeURIComponent(userId)}/tasks/${encodeURIComponent(id)}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -417,12 +429,14 @@ export const taskAPI = {
           }
           throw new Error('Authentication required');
         }
+        // Clone the response to avoid "body stream already read" error
+        const clonedResponse = response.clone();
         // Try to parse error response as JSON, fallback to text if it fails
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await clonedResponse.json();
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
+          // If JSON parsing fails, try to get text response from the original response
           const errorText = await response.text();
           throw new Error(errorText || `HTTP error! status: ${response.status}`);
         }
