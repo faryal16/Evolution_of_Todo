@@ -3,7 +3,8 @@
     "allow": [
       "Bash(powershell -ExecutionPolicy Bypass -File .specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)",
       "Bash(uvicorn:*)",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(python -m pytest tests/integration/test_jwt_validation.py -v)"
     ]
   }
 }
