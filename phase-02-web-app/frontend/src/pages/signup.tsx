@@ -22,22 +22,28 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await authAPI.signup({
+      const response = await authAPI.signup({
         email: formData.email,
         password: formData.password,
         username: formData.name,
       });
-      router.push('/login');
-    } catch (error) {
+
+      // ✅ Save token and user in localStorage
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+
+      // Redirect to home page after signup
+      router.push('/');
+    } catch (error: any) {
       console.error('Signup failed:', error);
-      alert('Signup failed. Please try again.');
+      alert(error.message || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[60vh] bg-gradient-to-br  flex items-center justify-center p-4">
+    <div className="min-h-[60vh] bg-gradient-to-br flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-pink-100 rounded-2xl shadow-xl overflow-hidden border-t-4 border-pink-400">
         <div className="p-8">
           <div className="text-center">
@@ -47,9 +53,7 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <input
                 id="name"
                 name="name"
@@ -57,15 +61,13 @@ export default function SignupPage() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
                 placeholder="John Doe"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 id="email"
                 name="email"
@@ -73,15 +75,13 @@ export default function SignupPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
                 placeholder="john@example.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
                 id="password"
                 name="password"
@@ -89,15 +89,15 @@ export default function SignupPage() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
                 placeholder="••••••••"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-pink-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-pink-600 transition duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 disabled:opacity-50"
+              className="w-full bg-pink-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-pink-600 transition duration-300 transform hover:-translate-y-0.5 disabled:opacity-50"
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
@@ -106,9 +106,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Already have an account?{' '}
-              <Link href="/login" className="text-pink-600 hover:text-pink-800 font-medium">
-                Sign in
-              </Link>
+              <Link href="/login" className="text-pink-600 hover:text-pink-800 font-medium">Sign in</Link>
             </p>
           </div>
         </div>

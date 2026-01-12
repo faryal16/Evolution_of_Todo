@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { authAPI } from '@/services/api';
-import { setAuthData } from '@/lib/auth';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const LoginPage = () => {
@@ -18,15 +17,12 @@ const LoginPage = () => {
     setError(null);
 
     try {
-      const response = await authAPI.login({
-        email,
-        password
-      });
+      const response = await authAPI.login({ email, password });
 
-      // Store auth data
-      setAuthData(response.token, response.user, response.expiresAt);
+      // ✅ Save token and user in localStorage
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
 
-      // Redirect to home page
       router.push('/');
     } catch (err: any) {
       setError(err.message || 'Login failed');
@@ -36,21 +32,17 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center bg-gradient-to-br  p-4">
+    <div className="min-h-[60vh] flex items-center justify-center bg-gradient-to-br p-4">
       <div className="w-full max-w-md bg-pink-100 rounded-2xl shadow-xl overflow-hidden border-t-4 border-pink-400">
         <div className="p-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
-              Sign in to your account
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Sign in to your account</h2>
             <p className="text-gray-500 mb-6">Welcome back! Please login to continue.</p>
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 id="email"
                 name="email"
@@ -64,9 +56,7 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
                 id="password"
                 name="password"
@@ -79,11 +69,7 @@ const LoginPage = () => {
               />
             </div>
 
-            {error && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
-                {error}
-              </div>
-            )}
+            {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
             <button
               type="submit"
@@ -97,9 +83,7 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-600 text-sm">
               Don't have an account?{' '}
-              <Link href="/signup" className="font-medium text-pink-600 hover:text-pink-800">
-                Sign up
-              </Link>
+              <Link href="/signup" className="font-medium text-pink-600 hover:text-pink-800">Sign up</Link>
             </p>
           </div>
         </div>
