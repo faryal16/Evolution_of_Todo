@@ -1,8 +1,11 @@
 import { Task, TaskRequest, UpdateTaskRequest, AuthRequest, AuthResponse } from '@/types';
 
-// 🔹 Set HF backend HTTPS URL
-const API_BASE_URL = 'https://faryal16-todo-app-backend.hf.space';
+// 🔹 Set backend URL from environment variable
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://faryal16-todo-app-backend.hf.space';
 const AUTH_BASE_URL = API_BASE_URL; // Auth endpoints are on the same backend
+
+// 🔹 Optional: toggle auth header for public backend
+const USE_AUTH = process.env.NEXT_PUBLIC_USE_AUTH === 'true';
 
 // Helper: Get auth token from localStorage
 const getAuthToken = (): string | null => {
@@ -14,7 +17,12 @@ const getAuthToken = (): string | null => {
 const getAuthHeaders = (): HeadersInit => {
   const token = getAuthToken();
   const headers: HeadersInit = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  // Only send Authorization if using local backend or USE_AUTH=true
+  if ((API_BASE_URL.includes('localhost') || USE_AUTH) && token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   return headers;
 };
 
@@ -26,6 +34,7 @@ export const authAPI = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
+
     if (!response.ok) throw new Error(`Signup failed! Status: ${response.status}`);
     const data = await response.json();
     const authData = data.data;
@@ -48,6 +57,7 @@ export const authAPI = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
+
     if (!response.ok) throw new Error(`Login failed! Status: ${response.status}`);
     const data = await response.json();
     const authData = data.data;
