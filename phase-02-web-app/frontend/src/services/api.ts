@@ -15,10 +15,10 @@ const getAuthToken = (): string | null => {
 
 // Helper: Auth headers
 const getAuthHeaders = (): HeadersInit => {
-  const token = getAuthToken();
   const headers: HeadersInit = { 'Content-Type': 'application/json' };
-
+  
   // Only send Authorization if using local backend or USE_AUTH=true
+  const token = getAuthToken();
   if ((API_BASE_URL.includes('localhost') || USE_AUTH) && token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
