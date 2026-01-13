@@ -7,25 +7,24 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const [allowed, setAllowed] = useState(false);
+  const [status, setStatus] = useState<'checking' | 'authorized' | 'unauthorized'>('checking');
   const router = useRouter();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const refreshed = await checkAndRefreshToken();
-      if (!refreshed || !isAuthenticated()) {
-        router.replace('/login'); // use replace instead of push
+    const verify = async () => {
+      const ok = await checkAndRefreshToken(); // refresh if needed
+      if (!ok || !isAuthenticated()) {
+        // use replace (not push) to avoid Navigation Abort
+        router.replace('/login');
+        setStatus('unauthorized');
         return;
       }
-      setAllowed(true);
-      setLoading(false);
+      setStatus('authorized');
     };
-
-    checkAuth();
+    verify();
   }, [router]);
 
-  if (loading) {
+  if (status === 'checking') {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -33,7 +32,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  return <>{allowed && children}</>;
+  if (status === 'unauthorized') {
+    return null; // won’t try to render protected content
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;
