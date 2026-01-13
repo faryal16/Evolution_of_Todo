@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { isAuthenticated, isTokenExpired, checkAndRefreshToken } from '@/lib/auth';
+import { isAuthenticated, checkAndRefreshToken } from '@/lib/auth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,24 +8,17 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
+  const [allowed, setAllowed] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Check if token needs refresh and refresh if needed
       const refreshed = await checkAndRefreshToken();
-      if (!refreshed) {
-        // If refresh failed, redirect to login
-        router.push('/login');
+      if (!refreshed || !isAuthenticated()) {
+        router.replace('/login'); // use replace instead of push
         return;
       }
-
-      // Check if user is authenticated
-      if (!isAuthenticated()) {
-        router.push('/login');
-        return;
-      }
-
+      setAllowed(true);
       setLoading(false);
     };
 
@@ -40,7 +33,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  return <>{children}</>;
+  return <>{allowed && children}</>;
 };
 
 export default ProtectedRoute;
