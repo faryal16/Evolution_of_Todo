@@ -1,12 +1,10 @@
 import { User, AuthSession } from '@/types';
 
-// Authentication service for handling user authentication state
-
 const TOKEN_KEY = 'authToken';
 const USER_KEY = 'user';
 const EXPIRES_KEY = 'expiresAt'; // store backend expiration
 
-// Store authentication token, user data, and expiration
+// 🔹 Store authentication token, user data, and expiration
 export const setAuthData = (token: string, user: User, expiresAt: string): void => {
   if (typeof window !== 'undefined') {
     localStorage.setItem(TOKEN_KEY, token);
@@ -15,15 +13,13 @@ export const setAuthData = (token: string, user: User, expiresAt: string): void 
   }
 };
 
-// Get authentication token
+// 🔹 Get authentication token
 export const getAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(TOKEN_KEY);
-  }
+  if (typeof window !== 'undefined') return localStorage.getItem(TOKEN_KEY);
   return null;
 };
 
-// Get user data
+// 🔹 Get user data
 export const getUser = (): User | null => {
   if (typeof window !== 'undefined') {
     const userData = localStorage.getItem(USER_KEY);
@@ -32,15 +28,20 @@ export const getUser = (): User | null => {
   return null;
 };
 
-// Get token expiration
+// 🔹 Get token expiration
 export const getTokenExpiration = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(EXPIRES_KEY);
-  }
+  if (typeof window !== 'undefined') return localStorage.getItem(EXPIRES_KEY);
   return null;
 };
 
-// Check if user is authenticated
+// 🔹 Check if token is expired
+export const isTokenExpired = (): boolean => {
+  const expiresAt = getTokenExpiration();
+  if (!expiresAt) return true;
+  return Date.now() > new Date(expiresAt).getTime();
+};
+
+// 🔹 Check if user is authenticated
 export const isAuthenticated = (): boolean => {
   const token = getAuthToken();
   const user = getUser();
@@ -48,7 +49,7 @@ export const isAuthenticated = (): boolean => {
   return !isTokenExpired();
 };
 
-// Clear authentication data
+// 🔹 Clear authentication data
 export const clearAuthData = (): void => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(TOKEN_KEY);
@@ -57,39 +58,31 @@ export const clearAuthData = (): void => {
   }
 };
 
-// Get session information
+// 🔹 Get session info
 export const getAuthSession = (): AuthSession | null => {
   const token = getAuthToken();
   const user = getUser();
   const expiresAt = getTokenExpiration();
-
-  if (token && user && expiresAt) {
-    return { token, user, expiresAt };
-  }
-
+  if (token && user && expiresAt) return { token, user, expiresAt };
   return null;
 };
 
-// Check if token is expired
-export const isTokenExpired = (): boolean => {
-  const session = getAuthSession();
-  if (!session) return true;
-
-  const expirationTime = new Date(session.expiresAt).getTime();
-  return Date.now() > expirationTime;
-};
-
-// Refresh token (placeholder)
+// 🔹 Refresh token (dummy placeholder)
 export const refreshToken = async (): Promise<boolean> => {
-  // Implement backend refresh logic if available
-  return true;
-};
+  const token = getAuthToken();
+  if (!token) return false; // nothing to refresh
 
-// Check and refresh token if needed
-export const checkAndRefreshToken = async (): Promise<boolean> => {
+  // Here you can call backend /auth/refresh if available
+  // For now, we just assume token is invalid if expired
   if (isTokenExpired()) {
-    clearAuthData(); // remove expired token
-    return await refreshToken();
+    clearAuthData();
+    return false;
   }
   return true;
+};
+
+// 🔹 Check and refresh token if needed
+export const checkAndRefreshToken = async (): Promise<boolean> => {
+  const refreshed = await refreshToken();
+  return refreshed && isAuthenticated();
 };
