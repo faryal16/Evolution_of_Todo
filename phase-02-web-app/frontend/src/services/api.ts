@@ -1,21 +1,21 @@
+import { getAuthToken, isTokenExpired } from '@/lib/auth';
 import { Task, TaskRequest, UpdateTaskRequest, AuthRequest, AuthResponse } from '@/types';
+
 
 // 🔹 Backend URL
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   'https://faryal16-todo-app-backend.hf.space';
 
-// 🔹 Helper: Get token from localStorage
-const getAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') return localStorage.getItem('authToken');
-  return null;
-};
-
-// 🔹 Helper: Build headers (always send token if exists)
+// 🔹 Helper: Build headers (always send token if exists and not expired)
 const getAuthHeaders = (): HeadersInit => {
   const headers: HeadersInit = { 'Content-Type': 'application/json' };
   const token = getAuthToken();
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  if (token && !isTokenExpired()) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   return headers;
 };
 
@@ -70,7 +70,7 @@ export const authAPI = {
   logout: async (): Promise<void> => {
     try {
       const token = getAuthToken();
-      if (token) {
+      if (token && !isTokenExpired()) {
         await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: getAuthHeaders(),

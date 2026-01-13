@@ -4,12 +4,14 @@ import { User, AuthSession } from '@/types';
 
 const TOKEN_KEY = 'authToken';
 const USER_KEY = 'user';
+const EXPIRES_KEY = 'expiresAt'; // store backend expiration
 
-// Store authentication token and user data
+// Store authentication token, user data, and expiration
 export const setAuthData = (token: string, user: User, expiresAt: string): void => {
   if (typeof window !== 'undefined') {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem(EXPIRES_KEY, expiresAt);
   }
 };
 
@@ -30,22 +32,20 @@ export const getUser = (): User | null => {
   return null;
 };
 
+// Get token expiration
+export const getTokenExpiration = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(EXPIRES_KEY);
+  }
+  return null;
+};
+
 // Check if user is authenticated
 export const isAuthenticated = (): boolean => {
   const token = getAuthToken();
-  if (!token) {
-    return false;
-  }
-
-  // Check if token is expired
   const user = getUser();
-  if (!user) {
-    return false;
-  }
-
-  // In a real implementation, we would decode the JWT and check the exp claim
-  // For now, we'll just check if the token exists
-  return true;
+  if (!token || !user) return false;
+  return !isTokenExpired();
 };
 
 // Clear authentication data
@@ -53,6 +53,7 @@ export const clearAuthData = (): void => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(EXPIRES_KEY);
   }
 };
 
@@ -60,15 +61,10 @@ export const clearAuthData = (): void => {
 export const getAuthSession = (): AuthSession | null => {
   const token = getAuthToken();
   const user = getUser();
+  const expiresAt = getTokenExpiration();
 
-  if (token && user) {
-    // In a real implementation, we would decode the JWT to get the expiration time
-    // For now, we'll return a mock session
-    return {
-      token,
-      user,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
-    };
+  if (token && user && expiresAt) {
+    return { token, user, expiresAt };
   }
 
   return null;
@@ -77,26 +73,22 @@ export const getAuthSession = (): AuthSession | null => {
 // Check if token is expired
 export const isTokenExpired = (): boolean => {
   const session = getAuthSession();
-  if (!session) {
-    return true;
-  }
+  if (!session) return true;
 
   const expirationTime = new Date(session.expiresAt).getTime();
-  const currentTime = new Date().getTime();
-
-  return currentTime > expirationTime;
+  return Date.now() > expirationTime;
 };
 
-// Refresh token (placeholder implementation)
+// Refresh token (placeholder)
 export const refreshToken = async (): Promise<boolean> => {
-  // In a real implementation, we would make a request to refresh the token
-  // For now, we'll just return true to indicate success
+  // Implement backend refresh logic if available
   return true;
 };
 
 // Check and refresh token if needed
 export const checkAndRefreshToken = async (): Promise<boolean> => {
   if (isTokenExpired()) {
+    clearAuthData(); // remove expired token
     return await refreshToken();
   }
   return true;
