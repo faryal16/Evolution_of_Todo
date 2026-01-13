@@ -1,42 +1,35 @@
 import { Task, TaskRequest, UpdateTaskRequest, AuthRequest, AuthResponse } from '@/types';
 
-// 🔹 Set backend URL from environment variable
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://faryal16-todo-app-backend.hf.space';
-const AUTH_BASE_URL = API_BASE_URL; // Auth endpoints are on the same backend
+// 🔹 Backend URL
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  'https://faryal16-todo-app-backend.hf.space';
 
-// 🔹 Optional: toggle auth header for public backend
-const USE_AUTH = process.env.NEXT_PUBLIC_USE_AUTH === 'true';
-
-// Helper: Get auth token from localStorage
+// 🔹 Helper: Get token from localStorage
 const getAuthToken = (): string | null => {
   if (typeof window !== 'undefined') return localStorage.getItem('authToken');
   return null;
 };
 
-// Helper: Auth headers
+// 🔹 Helper: Build headers (always send token if exists)
 const getAuthHeaders = (): HeadersInit => {
   const headers: HeadersInit = { 'Content-Type': 'application/json' };
-  
-  // Only send Authorization if using local backend or USE_AUTH=true
   const token = getAuthToken();
-  if ((API_BASE_URL.includes('localhost') || USE_AUTH) && token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   return headers;
 };
 
 // 🔹 Auth API
 export const authAPI = {
   signup: async (userData: AuthRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${AUTH_BASE_URL}/auth/signup`, {
+    const res = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
 
-    if (!response.ok) throw new Error(`Signup failed! Status: ${response.status}`);
-    const data = await response.json();
+    if (!res.ok) throw new Error(`Signup failed! Status: ${res.status}`);
+    const data = await res.json();
     const authData = data.data;
 
     if (typeof window !== 'undefined') {
@@ -46,20 +39,20 @@ export const authAPI = {
 
     return {
       token: authData.token,
-      user: { ...authData.user, id: authData.user.id, createdAt: authData.user.created_at || authData.user.createdAt },
-      expiresAt: authData.expires_at || authData.expiresAt,
+      user: { ...authData.user, id: authData.user.id },
+      expiresAt: authData.expires_at,
     };
   },
 
   login: async (credentials: AuthRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${AUTH_BASE_URL}/auth/login`, {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
 
-    if (!response.ok) throw new Error(`Login failed! Status: ${response.status}`);
-    const data = await response.json();
+    if (!res.ok) throw new Error(`Login failed! Status: ${res.status}`);
+    const data = await res.json();
     const authData = data.data;
 
     if (typeof window !== 'undefined') {
@@ -69,8 +62,8 @@ export const authAPI = {
 
     return {
       token: authData.token,
-      user: { ...authData.user, id: authData.user.id, createdAt: authData.user.created_at || authData.user.createdAt },
-      expiresAt: authData.expires_at || authData.expiresAt,
+      user: { ...authData.user, id: authData.user.id },
+      expiresAt: authData.expires_at,
     };
   },
 
@@ -78,10 +71,13 @@ export const authAPI = {
     try {
       const token = getAuthToken();
       if (token) {
-        await fetch(`${AUTH_BASE_URL}/auth/logout`, { method: 'POST', headers: getAuthHeaders() });
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+        });
       }
     } catch (error) {
-      console.error('Logout API error:', error);
+      console.error('Logout error:', error);
     } finally {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('authToken');
@@ -100,9 +96,9 @@ export const taskAPI = {
     if (sort) params.append('sort', sort);
     if (params.toString()) url += `?${params.toString()}`;
 
-    const response = await fetch(url, { headers: getAuthHeaders() });
-    if (!response.ok) throw new Error(`Failed to fetch tasks. Status: ${response.status}`);
-    const data = await response.json();
+    const res = await fetch(url, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Failed to fetch tasks. Status: ${res.status}`);
+    const data = await res.json();
     return (data.data?.tasks || []).map((task: any) => ({
       ...task,
       id: task.id?.toString() || '',
@@ -113,50 +109,50 @@ export const taskAPI = {
   },
 
   createTask: async (taskData: TaskRequest): Promise<Task> => {
-    const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+    const res = await fetch(`${API_BASE_URL}/api/tasks`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(taskData),
     });
-    if (!response.ok) throw new Error(`Failed to create task. Status: ${response.status}`);
-    const data = await response.json();
+    if (!res.ok) throw new Error(`Failed to create task. Status: ${res.status}`);
+    const data = await res.json();
     const task = data.data;
     return { ...task, id: task.id?.toString() || '', userId: task.user_id, createdAt: task.created_at, updatedAt: task.updated_at };
   },
 
   updateTask: async (id: string, taskData: UpdateTaskRequest): Promise<Task> => {
-    const response = await fetch(`${API_BASE_URL}/api/tasks/${encodeURIComponent(id)}`, {
+    const res = await fetch(`${API_BASE_URL}/api/tasks/${encodeURIComponent(id)}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(taskData),
     });
-    if (!response.ok) throw new Error(`Failed to update task. Status: ${response.status}`);
-    const data = await response.json();
+    if (!res.ok) throw new Error(`Failed to update task. Status: ${res.status}`);
+    const data = await res.json();
     const task = data.data;
     return { ...task, id: task.id?.toString() || '', userId: task.user_id, createdAt: task.created_at, updatedAt: task.updated_at };
   },
 
   toggleTaskCompletion: async (id: string, completed: boolean): Promise<Task> => {
-    const response = await fetch(`${API_BASE_URL}/api/tasks/${encodeURIComponent(id)}/complete`, {
+    const res = await fetch(`${API_BASE_URL}/api/tasks/${encodeURIComponent(id)}/complete`, {
       method: 'PATCH',
       headers: getAuthHeaders(),
       body: JSON.stringify({ completed }),
     });
-    if (!response.ok) throw new Error(`Failed to toggle task completion. Status: ${response.status}`);
-    const data = await response.json();
+    if (!res.ok) throw new Error(`Failed to toggle task completion. Status: ${res.status}`);
+    const data = await res.json();
     const task = data.data;
     return { ...task, id: task.id?.toString() || '', userId: task.user_id, createdAt: task.created_at, updatedAt: task.updated_at };
   },
 
   deleteTask: async (id: string): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/api/tasks/${encodeURIComponent(id)}`, {
+    const res = await fetch(`${API_BASE_URL}/api/tasks/${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
-    if (!response.ok) throw new Error(`Failed to delete task. Status: ${response.status}`);
+    if (!res.ok) throw new Error(`Failed to delete task. Status: ${res.status}`);
   },
 };
 
-// 🔹 Export API
+// 🔹 Export all APIs
 const API = { auth: authAPI, tasks: taskAPI };
 export default API;
